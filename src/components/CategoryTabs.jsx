@@ -1,5 +1,6 @@
 // src/components/CategoryTabs.jsx
 import React from 'react';
+import './CategoryTabs.css';
 
 const categories = [
   { label: 'Top Movies', value: 'movies' },

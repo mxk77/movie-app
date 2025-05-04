@@ -1,0 +1,158 @@
+/* src/components/MediaModal.css */
+
+/* Design tokens */
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #f9fafb;
+  --color-primary: #3b82f6;
+  --color-secondary: #fbbf24;
+  --color-text: #111827;
+  --color-muted: #6b7280;
+
+  --fs-xxl: 2.25rem; /* 36px */
+  --fs-xl: 1.5rem; /* 24px */
+  --fs-lg: 1.25rem; /* 20px */
+  --fs-md: 1rem; /* 16px */
+  --fs-sm: 0.875rem; /* 14px */
+
+  --spacing-sm: 0.5rem; /* 8px */
+  --spacing-md: 1rem; /* 16px */
+  --spacing-lg: 1.5rem; /* 24px */
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --transition-fast: 300ms ease-out;
+}
+
+/* Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeInOverlay var(--transition-fast);
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Content */
+.modal-content {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: var(--spacing-lg);
+  animation: slideInModal var(--transition-fast);
+}
+
+@keyframes slideInModal {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Close button */
+.modal-close {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  background: none;
+  border: none;
+  font-size: var(--fs-lg);
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+.modal-close:hover {
+  color: var(--color-primary);
+}
+
+/* Header */
+.modal-header {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+.modal-header img {
+  width: 150px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+/* Title & rating */
+.modal-header h2 {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: var(--fs-xl);
+  color: var(--color-text);
+}
+.modal-header p {
+  margin: 0;
+  font-size: var(--fs-md);
+  color: var(--color-text);
+}
+
+/* Sections */
+.modal-overview,
+.modal-actors,
+.modal-reviews {
+  margin-top: var(--spacing-lg);
+}
+.modal-overview h3,
+.modal-actors h3,
+.modal-reviews h3 {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: var(--fs-lg);
+  color: var(--color-text);
+}
+.modal-overview p {
+  margin: 0;
+  font-size: var(--fs-md);
+  color: var(--color-text);
+}
+
+/* Actors & reviews lists */
+.modal-actors ul,
+.modal-reviews ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.modal-actors li,
+.modal-reviews li {
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+}
+
+/* Scrollbar styling for modal */
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+.modal-content::-webkit-scrollbar-thumb {
+  background-color: var(--color-muted);
+  border-radius: var(--radius-sm);
+}

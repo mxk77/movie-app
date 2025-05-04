@@ -1,0 +1,50 @@
+/* src/components/CategoryTabs.css */
+
+/* Design tokens */
+:root {
+  --color-bg: #ffffff;
+  --color-primary: #3b82f6;
+  --color-text: #111827;
+  --color-muted: #6b7280;
+
+  --fs-md: 1rem; /* 16px */
+  --spacing-sm: 0.5rem; /* 8px */
+  --spacing-md: 1rem; /* 16px */
+
+  --radius-sm: 8px;
+  --transition-fast: 200ms ease-out;
+}
+
+/* Container */
+.category-tabs {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Tab buttons */
+.category-tabs button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--fs-md);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast),
+    transform var(--transition-fast), color var(--transition-fast);
+}
+
+/* Hover state */
+.category-tabs button:hover:not(.active) {
+  background: var(--color-primary);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Active tab */
+.category-tabs button.active {
+  background: var(--color-primary);
+  color: #fff;
+}

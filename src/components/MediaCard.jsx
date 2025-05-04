@@ -1,13 +1,13 @@
 // src/components/MediaCard.jsx
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import './MediaCard.css';
 
-export default function MediaCard({ media }) {
-  const navigate = useNavigate();
-  const { id, title, name, poster_path, vote_average } = media;
+export default function MediaCard({ media, onClick }) {
+  const { title, name, poster_path, vote_average } = media;
   const displayTitle = title || name;
+
   return (
-    <div className="media-card" onClick={() => navigate(`/movie/${id}`)}>
+    <div className="media-card compact" onClick={onClick}>
       <img
         src={`https://image.tmdb.org/t/p/w300${poster_path}`}
         alt={displayTitle}

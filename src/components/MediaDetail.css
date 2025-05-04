@@ -1,0 +1,87 @@
+/* src/components/MediaDetail.css */
+
+/* Design tokens */
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #f9fafb;
+  --color-text: #111827;
+  --color-muted: #6b7280;
+  --color-primary: #3b82f6;
+
+  --fs-xl: 1.5rem; /* 24px */
+  --fs-lg: 1.25rem; /* 20px */
+  --fs-md: 1rem; /* 16px */
+  --fs-sm: 0.875rem; /* 14px */
+
+  --spacing-sm: 0.5rem; /* 8px */
+  --spacing-md: 1rem; /* 16px */
+  --spacing-lg: 1.5rem; /* 24px */
+
+  --radius-md: 16px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Container */
+.media-detail {
+  background: var(--color-surface);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  max-width: 800px;
+  margin: var(--spacing-lg) auto;
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--color-text);
+}
+
+/* Title */
+.media-detail h2 {
+  font-size: var(--fs-xl);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Overview */
+.media-detail p {
+  font-size: var(--fs-md);
+  line-height: 1.5;
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Section headings */
+.media-detail h3 {
+  font-size: var(--fs-lg);
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-primary);
+}
+
+/* Actors & Reviews lists */
+.media-detail ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.media-detail li {
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+}
+
+/* Actor list styling */
+.media-detail .actors li {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Review styling */
+.media-detail .reviews li {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: var(--spacing-sm);
+}
+
+/* Responsive image in detail (if you include one) */
+.media-detail img {
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+}

@@ -8,124 +8,146 @@ import {
   getAnimationTV,
 } from '../services/tmdbApi';
 import MediaCard from './MediaCard';
+import MediaModal from './MediaModal';
 import Pagination from './Pagination';
+import './MediaGrid.css';
 
 export default function MediaGrid({ query, category }) {
   const [items, setItems] = useState([]);
+  const [modalInfo, setModalInfo] = useState({ isOpen: false, media: null });
   const [pageSize, setPageSize] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
-
-  // How many TMDb pages we've loaded so far
-  const [loadedApiPages, setLoadedApiPages] = useState(0);
-  // Total TMDb pages available (from API)
   const [totalApiPages, setTotalApiPages] = useState(null);
 
-  // Fetch up to 5 TMDb pages starting at `startPage`
-  const fetchApiBlock = useCallback(async (startPage) => {
-    // Determine which pages to fetch
-    const pages = [];
-    for (let p = startPage; p < startPage + 5 && (totalApiPages == null || p <= totalApiPages); p++) {
-      pages.push(p);
+  const fetchPageItems = useCallback(async () => {
+    const pagesNeeded = Math.ceil(pageSize / 20);
+    const startApiPage = Math.floor((currentPage - 1) * pageSize / 20) + 1;
+    const promises = [];
+
+    for (let i = 0; i < pagesNeeded; i++) {
+      const p = startApiPage + i;
+      if (totalApiPages != null && p > totalApiPages) break;
+
+      if (query) {
+        promises.push(searchMedia(query, p));
+      } else if (category === 'movies') {
+        // помічаємо як movie
+        promises.push(
+          getTopMovies(p).then(res => ({
+            data: {
+              ...res.data,
+              results: res.data.results.map(r => ({ ...r, media_type: 'movie' }))
+            }
+          }))
+        );
+      } else if (category === 'tv') {
+        // помічаємо як tv
+        promises.push(
+          getTopTV(p).then(res => ({
+            data: {
+              ...res.data,
+              results: res.data.results.map(r => ({ ...r, media_type: 'tv' }))
+            }
+          }))
+        );
+      } else { // animation
+        promises.push(
+          Promise.all([getAnimationMovies(p), getAnimationTV(p)])
+            .then(([mRes, tRes]) => ({
+              data: {
+                // беремо total_pages з одного з них
+                total_pages: mRes.data.total_pages,
+                results: [
+                  ...mRes.data.results.map(r => ({ ...r, media_type: 'movie' })),
+                  ...tRes.data.results.map(r => ({ ...r, media_type: 'tv' }))
+                ]
+              }
+            }))
+        );
+      }
     }
-    if (pages.length === 0) return [];
 
-    // Perform requests
-    const responses = await Promise.all(
-      pages.map((p) => {
-        if (query) return searchMedia(query, p);
-        if (category === 'movies') return getTopMovies(p);
-        if (category === 'tv') return getTopTV(p);
-        // animation
-        return Promise.all([getAnimationMovies(p), getAnimationTV(p)])
-          .then(([m, t]) => ({ data: { results: [...m.data.results, ...t.data.results], total_pages: m.data.total_pages } }));
-      })
-    );
+    const responses = await Promise.all(promises);
 
-    // Capture total_pages from first response
-    if (totalApiPages == null && responses[0].data.total_pages != null) {
+    // Зберігаємо загальну кількість сторінок із першої відповіді
+    if (totalApiPages == null && responses[0]?.data?.total_pages) {
       setTotalApiPages(responses[0].data.total_pages);
     }
 
-    // Flatten results
-    return responses.flatMap((res) => res.data.results);
-  }, [query, category, totalApiPages]);
+    // Збираємо й сортуємо результати
+    const allResults = responses.flatMap(res => res.data.results);
+    allResults.sort((a, b) => (b.vote_average || 0) - (a.vote_average || 0));
 
-  // Load more TMDb pages if needed to cover the current UI page
-  const ensureItems = useCallback(async () => {
-    // Determine how many UI pages the loaded items cover
-    const loadedItemsCount = loadedApiPages * 20;
-    const coveredUiPages = Math.ceil(loadedItemsCount / pageSize);
+    setItems(allResults.slice(0, pageSize));
+  }, [query, category, currentPage, pageSize, totalApiPages]);
 
-    // If user navigated past the covered pages, fetch next block
-    if (currentPage > coveredUiPages) {
-      const nextStart = loadedApiPages + 1;
-      const newItems = await fetchApiBlock(nextStart);
-      setItems((prev) => {
-        const combined = [...prev, ...newItems].sort((a, b) => (b.vote_average || 0) - (a.vote_average || 0));
-        return combined;
-      });
-      setLoadedApiPages((prev) => prev + 5);
-    }
-  }, [currentPage, loadedApiPages, pageSize, fetchApiBlock]);
-
-  // On category or query change, reset and load the first block
-  const resetAndLoad = useCallback(async () => {
-    setItems([]);
-    setLoadedApiPages(0);
+  // При зміні запиту/категорії — скидаємо
+  useEffect(() => {
     setTotalApiPages(null);
     setCurrentPage(1);
+  }, [query, category]);
 
-    const firstBlock = await fetchApiBlock(1);
-    setItems(firstBlock.sort((a, b) => (b.vote_average || 0) - (a.vote_average || 0)));
-    setLoadedApiPages(5);
-  }, [fetchApiBlock]);
-
-  // Initial load / reload on query or category change
+  // Підвантажуємо
   useEffect(() => {
-    resetAndLoad();
-  }, [resetAndLoad]);
+    fetchPageItems();
+  }, [fetchPageItems]);
 
-  // Whenever currentPage changes, ensure we have enough items
-  useEffect(() => {
-    ensureItems();
-  }, [currentPage, ensureItems]);
+  // Prev/Next
+  const hasPrev = currentPage > 1;
+  const possibleUiPages = totalApiPages
+    ? Math.ceil((totalApiPages * 20) / pageSize)
+    : currentPage + 1;
+  const hasNext = currentPage < possibleUiPages;
 
-  // Determine total UI pages based on items loaded so far
-  const totalPages = Math.ceil(items.length / pageSize);
-  const paginated = items.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  // Модалка
+  const openModal = media => setModalInfo({ isOpen: true, media });
+  const closeModal = () => setModalInfo({ isOpen: false, media: null });
 
   return (
     <>
-      {/* Page size selector */}
       <div className="page-size-selector">
         <label>
           Items per page:{' '}
           <select
             value={pageSize}
-            onChange={(e) => {
+            onChange={e => {
               setPageSize(+e.target.value);
               setCurrentPage(1);
             }}
           >
-            {[20, 40, 60, 80, 100].map((n) => (
+            {[20, 40, 60, 80, 100].map(n => (
               <option key={n} value={n}>{n}</option>
             ))}
           </select>
         </label>
       </div>
 
-      {/* Media grid */}
       <div className="media-grid">
-        {paginated.map((media) => (
-          <MediaCard key={`${media.media_type}-${media.id}`} media={media} />
+        {items.map(media => (
+          <MediaCard
+            key={`${media.media_type}-${media.id}`}
+            media={media}
+            onClick={() => openModal(media)}
+          />
         ))}
       </div>
 
-      {/* Prev · Page X · Next */}
       <Pagination
         current={currentPage}
-        total={totalPages}
-        onPageChange={(p) => setCurrentPage(p)}
+        hasPrev={hasPrev}
+        hasNext={hasNext}
+        onPageChange={p => {
+          if (p >= 1 && p <= possibleUiPages) {
+            setCurrentPage(p);
+          }
+        }}
+      />
+
+      <MediaModal
+        isOpen={modalInfo.isOpen}
+        mediaId={modalInfo.media?.id}
+        mediaType={modalInfo.media?.media_type}
+        onRequestClose={closeModal}
       />
     </>
   );

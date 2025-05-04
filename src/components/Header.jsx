@@ -2,6 +2,7 @@
 import React from 'react';
 import SearchBar from './SearchBar';
 import CategoryTabs from './CategoryTabs';
+import './Header.css';
 
 /**
  * Header компонента, який містить поле пошуку та вкладки категорій.

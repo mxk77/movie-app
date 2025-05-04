@@ -1,5 +1,6 @@
 // src/components/Pagination.jsx
 import React from 'react';
+import './Pagination.css';
 
 export default function Pagination({ current, hasPrev, hasNext, onPageChange }) {
   return (

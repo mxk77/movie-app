@@ -1,0 +1,73 @@
+/* src/components/Header.css */
+
+/* Design tokens */
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #f9fafb;
+  --color-primary: #3b82f6;
+  --color-text: #111827;
+  --color-muted: #6b7280;
+
+  --fs-lg: 1.25rem; /* 20px */
+  --fs-md: 1rem; /* 16px */
+
+  --spacing-sm: 0.5rem; /* 8px */
+  --spacing-md: 1rem; /* 16px */
+  --spacing-lg: 1.5rem; /* 24px */
+
+  --radius-sm: 8px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+
+  --transition-fast: 200ms ease-out;
+}
+
+/* Header container */
+.app-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--color-surface);
+  padding: var(--spacing-md) var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Search bar inherits its own styles; ensure full width on mobile */
+.app-header .search-bar {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Category tabs container */
+.app-header .category-tabs {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+/* Category tab buttons */
+.app-header .category-tabs button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--fs-md);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.app-header .category-tabs button:hover:not(.active) {
+  background: var(--color-primary);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Active tab */
+.app-header .category-tabs .active {
+  background: var(--color-primary);
+  color: #fff;
+}
