@@ -1,3 +1,7 @@
+###Потребує встановлену змінну оточення REACT_APP_TMDB_API_KEY.
+
+Отримати дійсний API ключ можна за посиланням: [https://developer.themoviedb.org/docs/getting-started](url)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
