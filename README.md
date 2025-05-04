@@ -1,4 +1,4 @@
-###Потребує встановлену змінну оточення REACT_APP_TMDB_API_KEY.
+# Потребує встановлену змінну оточення REACT_APP_TMDB_API_KEY.
 
 Отримати дійсний API ключ можна за посиланням: [https://developer.themoviedb.org/docs/getting-started](url)
 
