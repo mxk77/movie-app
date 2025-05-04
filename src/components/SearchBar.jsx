@@ -15,7 +15,7 @@ export default function SearchBar({ onSearch }) {
   return (
     <input
       type="text"
-      placeholder="Пошук фільмів..."
+      placeholder="Search..."
       value={input}
       onChange={(e) => setInput(e.target.value)}
       className="search-bar"
